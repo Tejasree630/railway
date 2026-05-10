@@ -9,10 +9,10 @@ TaskFlow is a full-stack Team Task Management Web Application
 similar to Trello and Asana. Multiple users can create projects,
 assign tasks, and track progress with role-based access control.
 
-DEVELOPER: TUMMURU TEJASREE
+DEVELOPER: TUMMURU TEJA SREE
 SUBMISSION DATE: 10/05/2026
-LIVE URL: [Your Railway URL here]
-GITHUB: [Your GitHub URL here]
+LIVE URL : http://localhost:8000
+GITHUB: https://github.com/Tejasree630/railway
 
 
 ===============================================================
@@ -229,7 +229,7 @@ STEP 6 - Get Live URL
   Railway Dashboard â†’ Settings â†’ Domains â†’ Generate Domain
 
 STEP 7 - Your app is live!
-  https://taskflow-xxxx.railway.app
+  https://github.com/Tejasree630/railway
 
 
 ================================================================
@@ -269,7 +269,7 @@ CONTACT
 
 Name    : TUMMURU TEJA SREE
 Email   : tejasreetummuru@gmail.com
-GitHub  : [Your GitHub Profile URL]
+GitHub  : https://github.com/Tejasree630
 College : MALLA REDDY COLLEGE OF ENGINEERING FOR WOMEN
 
 
