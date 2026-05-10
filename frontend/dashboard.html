@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TaskFlow — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080a;--bg2:#0f1117;--surface:#181d2a;
+  --border:#1e2235;--border2:#2a304a;
+  --text:#eceef5;--text2:#7c82a0;--text3:#3d4260;
+  --accent:#4f7cff;--violet:#8b5cf6;--green:#10d97a;
+  --amber:#f5a623;--red:#f04444;--teal:#00d4d4;
+  --font-h:'Syne',sans-serif;--font-b:'DM Sans',sans-serif;
+}
+html,body{height:100%;background:var(--bg);font-family:var(--font-b);color:var(--text);overflow:hidden}
+.app{display:flex;height:100vh}
+
+/* SIDEBAR */
+.sidebar{width:220px;min-width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column}
+.sb-logo{display:flex;align-items:center;gap:9px;padding:22px 18px;border-bottom:1px solid var(--border)}
+.sb-hex{font-size:22px;color:var(--accent)}
+.sb-name{font-family:var(--font-h);font-size:17px;font-weight:800;color:#fff}
+.sb-nav{padding:10px 8px;border-bottom:1px solid var(--border)}
+.nav-link{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;text-decoration:none}
+.nav-link:hover{background:var(--surface);color:var(--text)}
+.nav-link.active{background:rgba(79,124,255,.15);color:var(--accent)}
+.sb-section{flex:1;overflow-y:auto;padding:12px 8px}
+.sb-label{font-size:10px;font-weight:600;letter-spacing:1.2px;color:var(--text3);padding:0 12px 8px;text-transform:uppercase}
+.sb-proj{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;cursor:pointer;transition:all .15s;font-size:13px;color:var(--text2)}
+.sb-proj:hover{background:var(--surface);color:var(--text)}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.btn-new-proj{width:100%;background:none;border:1px dashed var(--border);border-radius:8px;color:var(--text3);font-family:var(--font-b);font-size:12px;padding:8px;cursor:pointer;margin-top:8px;transition:all .2s}
+.btn-new-proj:hover{border-color:var(--accent);color:var(--accent)}
+.sb-user{display:flex;align-items:center;gap:10px;padding:14px 16px;border-top:1px solid var(--border)}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--violet));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0}
+.u-name{font-size:13px;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.u-role{font-size:11px;color:var(--text3)}
+.logout-btn{background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:4px;transition:color .2s}
+.logout-btn:hover{color:var(--red)}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;background:var(--bg)}
+.view{padding:30px 36px}
+.view-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;gap:16px}
+.view-head h1{font-family:var(--font-h);font-size:28px;font-weight:800;letter-spacing:-0.5px}
+.view-sub{color:var(--text2);font-size:13px;margin-top:3px}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-bottom:36px}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px 18px;transition:all .2s;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--c,var(--accent))}
+.stat:hover{transform:translateY(-3px);border-color:var(--border2)}
+.stat-ico{font-size:20px;color:var(--c,var(--accent));margin-bottom:12px}
+.stat-num{font-family:var(--font-h);font-size:32px;font-weight:800;line-height:1;margin-bottom:4px}
+.stat-lbl{font-size:12px;color:var(--text2)}
+
+/* TASKS */
+.section-title{font-family:var(--font-h);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text2);margin-bottom:14px}
+.task-list{display:flex;flex-direction:column;gap:8px}
+.task-row{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:14px;transition:all .15s}
+.task-row:hover{border-color:var(--border2);transform:translateX(3px)}
+.pri-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.task-info{flex:1;min-width:0}
+.t-title{font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t-meta{font-size:12px;color:var(--text3);margin-top:2px}
+.badge{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0}
+.b-todo{background:rgba(124,130,160,.12);color:var(--text2)}
+.b-inprogress{background:rgba(139,92,246,.15);color:var(--violet)}
+.b-done{background:rgba(16,217,122,.12);color:var(--green)}
+.empty{text-align:center;padding:60px 24px;color:var(--text3)}
+.empty-ico{font-size:48px;margin-bottom:14px;opacity:.3}
+
+/* BUTTONS */
+.btn-p{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-family:var(--font-b);font-size:14px;font-weight:500;cursor:pointer;transition:all .2s}
+.btn-p:hover{background:#3d63cc;transform:translateY(-1px)}
+.btn-o{background:transparent;color:var(--text2);border:1px solid var(--border);border-radius:10px;padding:10px 20px;font-family:var(--font-b);font-size:14px;cursor:pointer;transition:all .2s}
+.btn-o:hover{border-color:var(--border2);color:var(--text)}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;backdrop-filter:blur(6px);align-items:center;justify-content:center}
+.overlay.on{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:28px;width:90%;max-width:440px;box-shadow:0 24px 80px rgba(0,0,0,.6)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.modal-head h3{font-family:var(--font-h);font-size:19px;font-weight:700}
+.modal-close{background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:4px 8px;border-radius:6px}
+.modal-close:hover{background:var(--surface);color:var(--text)}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.8px;color:var(--text2);margin-bottom:7px}
+.field input,.field textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--font-b);font-size:14px;padding:11px 13px;outline:none;transition:border-color .2s}
+.field input:focus,.field textarea:focus{border-color:var(--accent)}
+.field input::placeholder,.field textarea::placeholder{color:var(--text3)}
+.field textarea{resize:vertical}
+.err{color:var(--red);font-size:12px;min-height:18px;margin-bottom:8px}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <span class="sb-hex">⬡</span>
+      <span class="sb-name">TaskFlow</span>
+    </div>
+    <nav class="sb-nav">
+      <a class="nav-link active" href="/dashboard"><span>◈</span> Dashboard</a>
+      <a class="nav-link" href="/projects"><span>▦</span> Projects</a>
+    </nav>
+    <div class="sb-section">
+      <div class="sb-label">My Projects</div>
+      <div id="proj-list"></div>
+      <button class="btn-new-proj" onclick="showModal()">+ New Project</button>
+    </div>
+    <div class="sb-user">
+      <div class="avatar" id="av">A</div>
+      <div style="flex:1;overflow:hidden">
+        <div class="u-name" id="uname">Loading...</div>
+        <div class="u-role">Team Member</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">↩</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="view">
+      <div class="view-head">
+        <div>
+          <h1 id="greeting">Good morning 👋</h1>
+          <p class="view-sub">Here's your team overview</p>
+        </div>
+        <button class="btn-p" onclick="showModal()">+ New Project</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat" style="--c:var(--accent)">
+          <div class="stat-ico">▦</div>
+          <div class="stat-num" id="s-proj">0</div>
+          <div class="stat-lbl">Projects</div>
+        </div>
+        <div class="stat" style="--c:var(--amber)">
+          <div class="stat-ico">◎</div>
+          <div class="stat-num" id="s-todo">0</div>
+          <div class="stat-lbl">To Do</div>
+        </div>
+        <div class="stat" style="--c:var(--violet)">
+          <div class="stat-ico">⟳</div>
+          <div class="stat-num" id="s-prog">0</div>
+          <div class="stat-lbl">In Progress</div>
+        </div>
+        <div class="stat" style="--c:var(--green)">
+          <div class="stat-ico">✓</div>
+          <div class="stat-num" id="s-done">0</div>
+          <div class="stat-lbl">Done</div>
+        </div>
+        <div class="stat" style="--c:var(--red)">
+          <div class="stat-ico">!</div>
+          <div class="stat-num" id="s-over">0</div>
+          <div class="stat-lbl">Overdue</div>
+        </div>
+        <div class="stat" style="--c:var(--teal)">
+          <div class="stat-ico">◉</div>
+          <div class="stat-num" id="s-mine">0</div>
+          <div class="stat-lbl">My Tasks</div>
+        </div>
+      </div>
+
+      <div class="section-title">Recent Tasks</div>
+      <div class="task-list" id="recent">
+        <div class="empty">
+          <div class="empty-ico">◎</div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="hideModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <h3>New Project</h3>
+      <button class="modal-close" onclick="hideModal()">✕</button>
+    </div>
+    <div class="field">
+      <label>Project Name</label>
+      <input type="text" id="pname" placeholder="e.g. Website Redesign">
+    </div>
+    <div class="field">
+      <label>Description</label>
+      <textarea id="pdesc" placeholder="What is this project about?" rows="3"></textarea>
+    </div>
+    <div class="err" id="perr"></div>
+    <div class="modal-foot">
+      <button class="btn-o" onclick="hideModal()">Cancel</button>
+      <button class="btn-p" onclick="createProject()">Create</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var COLORS = ['#4f7cff','#8b5cf6','#10d97a','#f5a623','#f04444','#00d4d4'];
+var token = localStorage.getItem('token');
+var user = JSON.parse(localStorage.getItem('user') || '{}');
+
+if (!token) { window.location.href = '/signin'; }
+
+document.getElementById('uname').textContent = user.name || 'User';
+document.getElementById('av').textContent = (user.name || 'U')[0].toUpperCase();
+
+var h = new Date().getHours();
+var gr = h < 12 ? 'Good morning' : (h < 18 ? 'Good afternoon' : 'Good evening');
+document.getElementById('greeting').textContent = gr + ', ' + ((user.name || '').split(' ')[0]) + ' !';
+
+function apiCall(method, path, body) {
+  var opts = {
+    method: method,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  return fetch('/api' + path, opts).then(function(r) {
+    return r.json().then(function(d) {
+      if (!r.ok) throw new Error(d.error || 'Error');
+      return d;
+    });
+  });
+}
+
+function load() {
+  Promise.all([
+    apiCall('GET', '/dashboard'),
+    apiCall('GET', '/projects')
+  ]).then(function(results) {
+    var dash = results[0];
+    var projs = results[1];
+    var s = dash.stats;
+
+    document.getElementById('s-proj').textContent = s.total_projects;
+    document.getElementById('s-todo').textContent = s.todo_tasks;
+    document.getElementById('s-prog').textContent = s.inprogress_tasks;
+    document.getElementById('s-done').textContent = s.done_tasks;
+    document.getElementById('s-over').textContent = s.overdue_tasks;
+    document.getElementById('s-mine').textContent = s.my_tasks;
+
+    var pl = document.getElementById('proj-list');
+    pl.innerHTML = projs.map(function(p, i) {
+      return '<div class="sb-proj" onclick="window.location.href=\'/projects\'">' +
+        '<div class="dot" style="background:' + COLORS[i % COLORS.length] + '"></div>' +
+        '<span>' + esc(p.name) + '</span></div>';
+    }).join('');
+
+    var rc = document.getElementById('recent');
+    if (!dash.recent_tasks.length) {
+      rc.innerHTML = '<div class="empty"><div class="empty-ico">◎</div><p>No tasks yet. Create a project!</p></div>';
+      return;
+    }
+    rc.innerHTML = dash.recent_tasks.map(function(t) {
+      var priColor = t.priority === 'high' ? 'var(--red)' : (t.priority === 'medium' ? 'var(--amber)' : 'var(--green)');
+      var statusLabel = t.status === 'todo' ? 'To Do' : (t.status === 'inprogress' ? 'In Progress' : 'Done');
+      return '<div class="task-row">' +
+        '<div class="pri-dot" style="background:' + priColor + '"></div>' +
+        '<div class="task-info">' +
+          '<div class="t-title">' + esc(t.title) + '</div>' +
+          '<div class="t-meta">' + esc(t.project_name) + (t.due_date ? ' · Due ' + t.due_date : '') + '</div>' +
+        '</div>' +
+        '<span class="badge b-' + t.status + '">' + statusLabel + '</span>' +
+        '</div>';
+    }).join('');
+  }).catch(function(e) {
+    console.error(e);
+    if (e.message && (e.message.includes('expired') || e.message.includes('token'))) {
+      window.location.href = '/signin';
+    }
+  });
+}
+
+function showModal() {
+  document.getElementById('overlay').classList.add('on');
+  setTimeout(function() { document.getElementById('pname').focus(); }, 100);
+}
+
+function hideModal() {
+  document.getElementById('overlay').classList.remove('on');
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') hideModal();
+});
+
+function createProject() {
+  var name = document.getElementById('pname').value.trim();
+  var desc = document.getElementById('pdesc').value.trim();
+  var err = document.getElementById('perr');
+  err.textContent = '';
+  if (!name) { err.textContent = 'Project name required'; return; }
+  apiCall('POST', '/projects', { name: name, description: desc }).then(function() {
+    document.getElementById('pname').value = '';
+    document.getElementById('pdesc').value = '';
+    hideModal();
+    load();
+  }).catch(function(e) {
+    err.textContent = e.message;
+  });
+}
+
+function logout() {
+  localStorage.clear();
+  window.location.href = '/signin';
+}
+
+function esc(s) {
+  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+load();
+</script>
+</body>
+</html>

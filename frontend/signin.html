@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TaskFlow — Sign In</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#07080a;color:#eceef5;height:100vh;display:flex;align-items:center;justify-content:center}
+.bg{position:fixed;inset:0;background:#07080a;z-index:0}
+.grid{position:absolute;inset:0;background-image:linear-gradient(rgba(79,124,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(79,124,255,.05) 1px,transparent 1px);background-size:48px 48px}
+.orb1{position:absolute;width:400px;height:400px;background:rgba(79,124,255,.2);border-radius:50%;filter:blur(100px);top:-100px;right:-100px}
+.orb2{position:absolute;width:300px;height:300px;background:rgba(139,92,246,.15);border-radius:50%;filter:blur(100px);bottom:-80px;left:-80px}
+.wrap{position:relative;z-index:1;width:100%;max-width:420px;padding:20px}
+.brand{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:30px}
+.brand-icon{font-size:30px;color:#4f7cff}
+.brand-name{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff}
+.card{background:#0f1117;border:1px solid #1e2235;border-radius:20px;padding:36px;box-shadow:0 24px 80px rgba(0,0,0,.6)}
+h1{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;margin-bottom:6px}
+.sub{color:#7c82a0;font-size:14px;margin-bottom:28px}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.8px;color:#7c82a0;margin-bottom:7px}
+.field input{width:100%;background:rgba(255,255,255,.04);border:1px solid #1e2235;border-radius:10px;color:#eceef5;font-size:14px;padding:12px 14px;outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s}
+.field input:focus{border-color:#4f7cff}
+.field input::placeholder{color:#3d4260}
+.err{color:#f04444;font-size:12px;min-height:20px;margin-bottom:10px}
+.btn{width:100%;background:#4f7cff;color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn:hover{background:#3d63cc;transform:translateY(-1px)}
+.demo{background:rgba(79,124,255,.08);border:1px solid rgba(79,124,255,.2);border-radius:8px;padding:10px 14px;margin-top:16px;font-size:12px;color:#7c82a0;text-align:center}
+.demo span{color:#4f7cff;font-weight:500}
+.bottom{text-align:center;margin-top:18px;font-size:13px;color:#7c82a0}
+.bottom a{color:#4f7cff;text-decoration:none;font-weight:500}
+</style>
+</head>
+<body>
+<div class="bg">
+  <div class="grid"></div>
+  <div class="orb1"></div>
+  <div class="orb2"></div>
+</div>
+<div class="wrap">
+  <div class="brand">
+    <span class="brand-icon">⬡</span>
+    <span class="brand-name">TaskFlow</span>
+  </div>
+  <div class="card">
+    <h1>Welcome back</h1>
+    <p class="sub">Sign in to your workspace</p>
+    <div class="field">
+      <label>Email Address</label>
+      <input type="email" id="email" placeholder="you@company.com" autofocus>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()">
+    </div>
+    <div class="err" id="err"></div>
+    <button class="btn" onclick="login()">Sign In →</button>
+    <div class="demo">Demo: <span>admin@demo.com</span> / <span>admin123</span></div>
+    <div class="bottom">No account? <a href="/signup">Create one →</a></div>
+  </div>
+</div>
+<script>
+async function login(){
+  const email=document.getElementById('email').value.trim();
+  const password=document.getElementById('password').value;
+  const err=document.getElementById('err');
+  err.textContent='';
+  if(!email||!password){err.textContent='Please fill all fields';return;}
+  try{
+    const res=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+    const data=await res.json();
+    if(!res.ok){err.textContent=data.error;return;}
+    localStorage.setItem('token',data.token);
+    localStorage.setItem('user',JSON.stringify(data.user));
+    window.location.href='/dashboard';
+  }catch(e){err.textContent='Server not running. Start python app.py';}
+}
+</script>
+</body>
+</html>
